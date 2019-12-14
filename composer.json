@@ -1,0 +1,36 @@
+{
+    "name": "bsv/php-project-lvl2",
+    "description": "Generate diff of config files",
+    "type": "project",
+    "keywords": [
+        "diff",
+        "config",
+        "hexlet"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "bsv",
+            "email": "bsv.phone@ya.ru"
+        }
+    ],
+    "require": {
+        "php": "7.3.*",
+        "wp-cli/php-cli-tools": "^0.11.11",
+        "docopt/docopt": "^1.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.5"
+    },
+    "autoload": {
+        "files": [
+            "src/main.php"
+        ]
+    },
+    "bin": [
+        "bin/gendiff"
+    ],
+    "scripts": {
+        "phpcs": "vendor/bin/phpcs"
+    }
+}
