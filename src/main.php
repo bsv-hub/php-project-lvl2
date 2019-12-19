@@ -1,6 +1,6 @@
 <?php
 
-namespace Gendiff\main;
+namespace DiffAnalyzer\main;
 
 use Docopt;
 
@@ -22,11 +22,21 @@ DOC;
 function run()
 {
     $response = Docopt::handle(DOC, ['version' => VERSION]);
+    // DiffAnalyzer\generateDiff($response->args['<pathToFile1>'], $response->args['<pathToFile2>']);
+
     $data1 = json_decode(file_get_contents($response->args['<pathToFile1>']), true);
     $data2 = json_decode(file_get_contents($response->args['<pathToFile2>']), true);
+    
     $intersectElements = array_intersect_assoc($data1, $data2);
     $addedElements = array_diff_assoc($data2, $data1);
     $removedElements = array_diff_assoc($data1, $data2);
+
+    
+    // $firstFileContents = file_ge
+    // $firstFileStructure = parse($firstFileContents);
+    // $secondFileStructure = parse($secondFileContents);
+    // $diff = getDiff($firstFileStructure, $secondFileStructure);
+    // diffToText($diff);
 
     echo "{\n";
     foreach ($intersectElements as $key => $value) {
