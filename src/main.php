@@ -1,6 +1,6 @@
 <?php
 
-namespace DiffAnalyzer\main;
+namespace DiffTool\main;
 
 use Docopt;
 
@@ -19,42 +19,39 @@ Options:
   --format <fmt>                Report format [default: plain]
 DOC;
 
-function run()
+function getDiffText($firstFileData, $secondFileData)
 {
-    $response = Docopt::handle(DOC, ['version' => VERSION]);
-    // DiffAnalyzer\generateDiff($response->args['<pathToFile1>'], $response->args['<pathToFile2>']);
-
-    $data1 = json_decode(file_get_contents($response->args['<pathToFile1>']), true);
-    $data2 = json_decode(file_get_contents($response->args['<pathToFile2>']), true);
-    
-    $intersectElements = array_intersect_assoc($data1, $data2);
-    $addedElements = array_diff_assoc($data2, $data1);
-    $removedElements = array_diff_assoc($data1, $data2);
-
-    
-    // $firstFileContents = file_ge
-    // $firstFileStructure = parse($firstFileContents);
-    // $secondFileStructure = parse($secondFileContents);
-    // $diff = getDiff($firstFileStructure, $secondFileStructure);
-    // diffToText($diff);
-
-    echo "{\n";
+    $intersectElements = array_intersect_assoc($firstFileData, $secondFileData);
+    $addedElements = array_diff_assoc($secondFileData, $firstFileData);
+    $removedElements = array_diff_assoc($firstFileData, $secondFileData);
+    $diffTextLines = [];
+    $diffTextLines[] = "{";
     foreach ($intersectElements as $key => $value) {
-        echo "    {$key}: {$value}\n";
+        $diffTextLines[] = "    {$key}: {$value}";
     }
     foreach ($removedElements as $key => $value) {
-        echo "  - {$key}: {$value}\n";
+        $diffTextLines[] = "  - {$key}: {$value}";
         if (in_array($key, array_keys($addedElements))) {
-            echo "  + {$key}: {$addedElements[$key]}\n";
+            $diffTextLines[] = "  + {$key}: {$addedElements[$key]}";
         }
     }
     foreach ($addedElements as $key => $value) {
         if (in_array($key, array_keys($removedElements))) {
             continue;
         }
-        echo "  + {$key}: {$addedElements[$key]}\n";
+        $diffTextLines[] = "  + {$key}: {$addedElements[$key]}";
     }
-    echo "}\n";
+    $diffTextLines[] = "}";
+    return implode("\n", $diffTextLines);
+}
 
-    // print_r($response);
+
+function run()
+{
+    $response = Docopt::handle(DOC, ['version' => VERSION]);
+    $firstFileContents = file_get_contents($response->args['<pathToFile1>']);
+    $secondFileContents = file_get_contents($response->args['<pathToFile2>']);
+    $firstFileData = json_decode($firstFileContents, true);
+    $secondFileData = json_decode($secondFileContents, true);
+    echo getDiffText($firstFileData, $secondFileData);
 }
