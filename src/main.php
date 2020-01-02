@@ -3,6 +3,8 @@
 namespace DiffTool\main;
 
 use Docopt;
+use ParseError;
+use Symfony\Component\Yaml\Yaml;
 
 const VERSION = '0.0.1';
 const DOC = <<<DOC
@@ -11,7 +13,7 @@ Generate diff
 Usage:
   gendiff (-h|--help)
   gendiff (-v|--version)
-  gendiff [--format <fmt>] <pathToFile1> <pathToFile2>
+  gendiff [--format <fmt>] <pathToOriginalFile> <pathToChangedFile>
 
 Options:
   -h --help                     Show this screen
@@ -45,13 +47,34 @@ function getDiffText($firstFileData, $secondFileData)
     return implode("\n", $diffTextLines);
 }
 
+function parse($text, $format)
+{
+    switch ($format) {
+        case 'json':
+            return json_decode($text, true);
+        case 'yaml':
+        case 'yml':
+            return Yaml::parse($text); // Yaml::PARSE_OBJECT_FOR_MAP
+        default:
+            throw new ParseError('Unknown format');
+    }
+}
+
+function getDiffBetweenFilesAsText($pathToOriginalFile, $pathToChangedFile)
+{
+    $contentsOfOriginalFile = file_get_contents($pathToOriginalFile);
+    $contentsOfChangedFile = file_get_contents($pathToChangedFile);
+    $extensionOfOriginalFile = pathinfo($pathToOriginalFile, PATHINFO_EXTENSION);
+    $extensionOfChangedFile = pathinfo($pathToChangedFile, PATHINFO_EXTENSION);
+    $originalData = parse($contentsOfOriginalFile, $extensionOfOriginalFile);
+    $changedData = parse($contentsOfChangedFile, $extensionOfChangedFile);
+    return getDiffText($originalData, $changedData);
+}
 
 function run()
 {
-    $response = Docopt::handle(DOC, ['version' => VERSION]);
-    $firstFileContents = file_get_contents($response->args['<pathToFile1>']);
-    $secondFileContents = file_get_contents($response->args['<pathToFile2>']);
-    $firstFileData = json_decode($firstFileContents, true);
-    $secondFileData = json_decode($secondFileContents, true);
-    echo getDiffText($firstFileData, $secondFileData);
+    $docOptResponse = Docopt::handle(DOC, ['version' => VERSION]);
+    $pathToOriginalFile = $docOptResponse->args['<pathToOriginalFile>'];
+    $pathToChangedFile = $docOptResponse->args['<pathToChangedFile>'];
+    echo getDiffText($pathToOriginalFile, $pathToChangedFile);
 }
