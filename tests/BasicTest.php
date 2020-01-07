@@ -3,9 +3,8 @@
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Yaml\Yaml;
 
-use function DiffTool\main\getDiffBetweenFilesAsText;
+use function DiffTool\actions\getRenderedFilesDiffText;
 
 class BasicTest extends TestCase
 {
@@ -21,7 +20,7 @@ class BasicTest extends TestCase
     {
         $pathToOriginalFile = __DIR__ . '/fixtures/original_flat.json';
         $pathToChangedFile = __DIR__ . '/fixtures/changed_flat.json';
-        $result = getDiffBetweenFilesAsText($pathToOriginalFile, $pathToChangedFile);
+        $result = getRenderedFilesDiffText($pathToOriginalFile, $pathToChangedFile);
         $this->assertEquals($this->expectedFlatComparisonResult, $result);
     }
     
@@ -29,7 +28,7 @@ class BasicTest extends TestCase
     {
         $pathToOriginalFile = __DIR__ . '/fixtures/original_flat.yml';
         $pathToChangedFile = __DIR__ . '/fixtures/changed_flat.yml';
-        $result = getDiffBetweenFilesAsText($pathToOriginalFile, $pathToChangedFile);
+        $result = getRenderedFilesDiffText($pathToOriginalFile, $pathToChangedFile);
         $this->assertEquals($this->expectedFlatComparisonResult, $result);
     }
 }
