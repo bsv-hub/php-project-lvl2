@@ -24,9 +24,9 @@ function parse($text, $type)
 function getParsedTypeForExtension(string $extension)
 {
     $extensionsToTypesMap = [
-        'json' => 'json',
-        'yml' => 'yaml',
-        'yaml' => 'yaml'
+        'json' => PARSED_TYPE_JSON,
+        'yml' => PARSED_TYPE_YAML,
+        'yaml' => PARSED_TYPE_YAML
     ];
     if (!array_key_exists($extension, $extensionsToTypesMap)) {
         throw new ParseError(UNSUPPORTED_EXTENSION_MESSAGE);

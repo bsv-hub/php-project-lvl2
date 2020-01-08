@@ -7,14 +7,14 @@ use function DiffTool\parsers\getParsedTypeForExtension;
 use function DiffTool\diffTree\makeDiffTree;
 use function DiffTool\renderers\renderDiffTree;
 
-function getRenderedFilesDiffText($pathToOriginalFile, $pathToChangedFile, $renderFormat = 'plain')
+function getRenderedFilesDiffText($pathToOriginalFile, $pathToModifiedFile, $renderFormat = 'plain')
 {
     $contentsOfOriginalFile = file_get_contents($pathToOriginalFile);
-    $contentsOfChangedFile = file_get_contents($pathToChangedFile);
+    $contentsOfModifiedFile = file_get_contents($pathToModifiedFile);
     $extensionOfOriginalFile = pathinfo($pathToOriginalFile, PATHINFO_EXTENSION);
-    $extensionOfChangedFile = pathinfo($pathToChangedFile, PATHINFO_EXTENSION);
+    $extensionOfModifiedFile = pathinfo($pathToModifiedFile, PATHINFO_EXTENSION);
     $originalData = parse($contentsOfOriginalFile, getParsedTypeForExtension($extensionOfOriginalFile));
-    $changedData = parse($contentsOfChangedFile, getParsedTypeForExtension($extensionOfChangedFile));
-    $diffTree = makeDiffTree($originalData, $changedData);
+    $modifiedData = parse($contentsOfModifiedFile, getParsedTypeForExtension($extensionOfModifiedFile));
+    $diffTree = makeDiffTree($originalData, $modifiedData);
     return renderDiffTree($diffTree, $renderFormat);
 }

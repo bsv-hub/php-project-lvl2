@@ -13,7 +13,7 @@ Generate diff
 Usage:
   gendiff (-h|--help)
   gendiff (-v|--version)
-  gendiff [--format <fmt>] <pathToOriginalFile> <pathToChangedFile>
+  gendiff [--format <fmt>] <pathToOriginalFile> <pathToModifiedFile>
 
 Options:
   -h --help                     Show this screen
@@ -25,7 +25,7 @@ function handle()
 {
     $docOptResponse = Docopt::handle(DOC, ['version' => VERSION]);
     $pathToOriginalFile = $docOptResponse->args['<pathToOriginalFile>'];
-    $pathToChangedFile = $docOptResponse->args['<pathToChangedFile>'];
+    $pathToModifiedFile = $docOptResponse->args['<pathToModifiedFile>'];
     $format = $docOptResponse->args['--format'];
-    echo getRenderedFilesDiffText($pathToOriginalFile, $pathToChangedFile, $format);
+    echo getRenderedFilesDiffText($pathToOriginalFile, $pathToModifiedFile, $format);
 }
