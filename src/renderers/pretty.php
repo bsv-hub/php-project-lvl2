@@ -35,7 +35,8 @@ function renderObject($objectToRender)
     return "{\n{$renderedObjectContents}\n{$offset}}";
 }
 
-function renderDiffLine($key, $value, $sign = '', $offsetLevel = 0) {
+function renderDiffLine($key, $value, $sign = '', $offsetLevel = 0)
+{
     $offset = str_repeat('    ', $offsetLevel);
     return "{$offset}  {$sign} {$key}: {$value}";
 }
@@ -47,37 +48,32 @@ function renderDiffNode($node)
     $offset = '---';
     $renderedOriginalValue = renderValue($node['originalValue'], $level);
     $renderedModifiedValue = renderValue($node['modifiedValue'], $level);
+
     switch ($node['type']) {
         case diffTree\DIFF_TYPE_SAME:
             return renderDiffLine($node['key'], $renderedOriginalValue, ' ', $level);
-            // $diffTextLines[] = "{$offset}    {$node['key']}: {$renderedOriginalValue}";
-
         case diffTree\DIFF_TYPE_ADDED:
-            return "{$offset}  + {$node['key']}: {$renderedModifiedValue}";
-
+            return renderDiffLine($node['key'], $renderedModifiedValue, '+', $level);
         case diffTree\DIFF_TYPE_REMOVED:
-            return "{$offset}  - {$node['key']}: {$renderedOriginalValue}";
-
+            return renderDiffLine($node['key'], $renderedOriginalValue, '-', $level);
         case diffTree\DIFF_TYPE_CHANGED:
-            return "{$offset}  - {$node['key']}: {$renderedOriginalValue}";
-            return "{$offset}  + {$node['key']}: {$renderedModifiedValue}";
-
+            return renderDiffLine($node['key'], $renderedOriginalValue, '-', $level);
+            return renderDiffLine($node['key'], $renderedModifiedValue, '+', $level);
         case diffTree\DIFF_TYPE_OBJECT:
             $renderedObject = renderDiffTree($node['children'], $level + 1);
-            return "{$offset}    {$node['key']}: {$renderedObject}";
-
+            return renderDiffLine($node['key'], $renderedObject, ' ', $level);
         default:
         // todo redo
             return '';
     }
 }
 
-function renderDiffTree($diffTree, $level = 0)
+function renderDiffTree($diffTree)
 {
     $offset = "   ";
     $nodeRendererFunctionName = __NAMESPACE__ . '\renderDiffNode';
     $renderedInnerLines = array_map($nodeRendererFunctionName, $diffTree);
     $renderedDiffLines = array_merge(['{'], $renderedInnerLines, ["{$offset}}"]);
-print_r($renderedDiffLines);
+// print_r($renderedDiffLines);
     return implode("\n", $renderedDiffLines);
 }
