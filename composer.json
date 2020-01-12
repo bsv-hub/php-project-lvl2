@@ -28,8 +28,11 @@
             "src/cliHandler.php",
             "src/actions.php",
             "src/parsers.php",
-            "src/renderers.php",
-            "src/diffTree.php"
+            "src/diffTree.php",
+            "src/renderer.php",
+            "src/renderers/pretty.php",
+            "src/renderers/plain.php",
+            "src/renderers/json.php"
         ]
     },
     "bin": [

@@ -14,7 +14,15 @@ class NestedDiffTest extends TestCase
         $pathToModifiedFile = __DIR__ . '/fixtures/modified_nested.json';
         $expectedNestedDiffResult = file_get_contents(__DIR__ . '/fixtures/nested_diff_result.txt');
         $result = getRenderedFilesDiffText($pathToOriginalFile, $pathToModifiedFile);
-        // $this->assertEquals('', $result);
+        $this->assertEquals($expectedNestedDiffResult, $result);
+    }
+
+    public function testNestedYamlFilesDiff()
+    {
+        $pathToOriginalFile = __DIR__ . '/fixtures/original_nested.yml';
+        $pathToModifiedFile = __DIR__ . '/fixtures/modified_nested.yml';
+        $expectedNestedDiffResult = file_get_contents(__DIR__ . '/fixtures/nested_diff_result.txt');
+        $result = getRenderedFilesDiffText($pathToOriginalFile, $pathToModifiedFile);
         $this->assertEquals($expectedNestedDiffResult, $result);
     }
 }

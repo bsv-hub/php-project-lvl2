@@ -1,24 +1,13 @@
 <?php
 
-namespace DiffTool\renderers;
+namespace DiffTool\renderers\json;
 
 use DiffTool\diffTree;
 
 function renderValue($value, $level = 0)
 {
     if (is_object($value)) {
-        $renderedObjectLines = array_map(
-            function ($key, $item) use ($level) {
-                $renderedValue = renderValue($item);
-                $offset = str_repeat('    ', $level + 1);
-                return "{$offset}    {$key}: {$renderedValue}";
-            },
-            array_keys((array) $value),
-            (array) $value
-        );
-        $renderedObjectContents = implode(",\n", $renderedObjectLines);
-        $offset = str_repeat('    ', $level);
-        return "{\n{$renderedObjectContents}\n{$offset}    }";
+        return renderObject($value);
     }
     if (is_array($value)) {
         return '[' . implode(', ', $value) . ']';
@@ -29,9 +18,24 @@ function renderValue($value, $level = 0)
     return (string) $value;
 }
 
-function renderDiffTree($diffTree, $renderFormat = 'plain', $level = 0)
+function renderObject($objectToRender)
 {
-    // print_r($diffTree);
+    $renderedObjectLines = array_map(
+        function ($key, $item) use ($level) {
+            $renderedValue = renderValue($item);
+            $offset = str_repeat('    ', $level + 1);
+            return "{$offset}    {$key}: {$renderedValue}";
+        },
+        array_keys((array) $value),
+        (array) $value
+    );
+    $renderedObjectContents = implode(",\n", $renderedObjectLines);
+    $offset = str_repeat('    ', $level);
+    return "{\n{$renderedObjectContents}\n{$offset}    }";
+}
+
+function renderDiffTree($diffTree, $level = 0)
+{
     $offset = str_repeat('    ', $level);
     $diffTextLines = [];
     $diffTextLines[] = "{";

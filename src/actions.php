@@ -5,9 +5,9 @@ namespace DiffTool\actions;
 use function DiffTool\parsers\parse;
 use function DiffTool\parsers\getParsedTypeForExtension;
 use function DiffTool\diffTree\makeDiffTree;
-use function DiffTool\renderers\renderDiffTree;
+use function DiffTool\renderer\renderDiffTree;
 
-function getRenderedFilesDiffText($pathToOriginalFile, $pathToModifiedFile, $renderFormat = 'plain')
+function getRenderedFilesDiffText($pathToOriginalFile, $pathToModifiedFile, $renderFormat = 'pretty')
 {
     $contentsOfOriginalFile = file_get_contents($pathToOriginalFile);
     $contentsOfModifiedFile = file_get_contents($pathToModifiedFile);
