@@ -14,6 +14,7 @@ class NestedDiffTest extends TestCase
         $pathToModifiedFile = __DIR__ . '/fixtures/modified_nested.json';
         $expectedNestedDiffResult = file_get_contents(__DIR__ . '/fixtures/nested_diff_result.txt');
         $result = getRenderedFilesDiffText($pathToOriginalFile, $pathToModifiedFile);
+        // print_r($result);
         $this->assertEquals($expectedNestedDiffResult, $result);
     }
 

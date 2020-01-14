@@ -41,3 +41,28 @@ function makeDiffNode($type, $key, $originalValue, $modifiedValue, $children = [
 {
     return compact('type', 'key', 'originalValue', 'modifiedValue', 'children');
 }
+
+function getType($node)
+{
+    return $node['type'];
+}
+
+function getKey($node)
+{
+    return $node['key'];
+}
+
+function getOriginalValue($node)
+{
+    return $node['originalValue'];
+}
+
+function getModifiedValue($node)
+{
+    return $node['modifiedValue'];
+}
+
+function getChildren($node)
+{
+    return $node['children'];
+}

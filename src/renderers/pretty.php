@@ -18,62 +18,76 @@ function renderValue($value)
     return (string) $value;
 }
 
-function renderObject($objectToRender)
+function getRenderedLinesForObject($object)
 {
-    $level = 1;
     $renderedObjectLines = array_map(
         function ($key, $item) use ($level) {
             $renderedValue = renderValue($item);
-            $offset = str_repeat('    ', $level + 1);
-            return "{$offset}{$key}: {$renderedValue}";
+            // $offset = str_repeat('    ', $level + 1);
+            return renderKeyValueLine($key, $renderedValue);
         },
         array_keys((array) $objectToRender),
         (array) $objectToRender
     );
     $renderedObjectContents = implode(",\n", $renderedObjectLines);
     $offset = str_repeat('    ', $level);
-    return "{\n{$renderedObjectContents}\n{$offset}}";
+    return "{\n{$renderedObjectContents}\n}";
 }
 
-function renderDiffLine($key, $value, $sign = '', $offsetLevel = 0)
+function renderKeyValueLine($key, $value, $diffToken = ' ')
 {
-    $offset = str_repeat('    ', $offsetLevel);
-    return "{$offset}  {$sign} {$key}: {$value}";
+    return "  {$diffToken} {$key}: {$value}";
 }
 
-function renderDiffNode($node)
+function getRenderedLinesForDiffNode($node)
 {
-    // print_r($node);
-    $level = 1;
-    $offset = '---';
-    $renderedOriginalValue = renderValue($node['originalValue'], $level);
-    $renderedModifiedValue = renderValue($node['modifiedValue'], $level);
-
-    switch ($node['type']) {
+    $key = diffTree\getKey($node);
+    $originalValue = diffTree\getOriginalValue($node);
+    $modifiedValue = diffTree\getModifiedValue($node);
+    switch (diffTree\getType($node)) {
         case diffTree\DIFF_TYPE_SAME:
-            return renderDiffLine($node['key'], $renderedOriginalValue, ' ', $level);
+            return [renderKeyValueLine($key, renderValue($originalValue), ' ')];
         case diffTree\DIFF_TYPE_ADDED:
-            return renderDiffLine($node['key'], $renderedModifiedValue, '+', $level);
+            return [renderKeyValueLine($key, renderValue($modifiedValue), '+')];
         case diffTree\DIFF_TYPE_REMOVED:
-            return renderDiffLine($node['key'], $renderedOriginalValue, '-', $level);
+            return [renderKeyValueLine($key, renderValue($originalValue), '-')];
         case diffTree\DIFF_TYPE_CHANGED:
-            return renderDiffLine($node['key'], $renderedOriginalValue, '-', $level);
-            return renderDiffLine($node['key'], $renderedModifiedValue, '+', $level);
+            return [
+                renderKeyValueLine($key, renderValue($originalValue), '-'),
+                renderKeyValueLine($key, renderValue($modifiedValue), '+')
+            ];
         case diffTree\DIFF_TYPE_OBJECT:
-            $renderedObject = renderDiffTree($node['children'], $level + 1);
-            return renderDiffLine($node['key'], $renderedObject, ' ', $level);
+            $collectRenderedLines = function ($acc, $node) {
+                return array_merge($acc, getRenderedLinesForDiffNode($node));
+            };
+            $addOffset = function ($line) {
+                return "    {$line}";
+            };
+            $renderedInnerLines = array_reduce(diffTree\getChildren($node), $collectRenderedLines, []);
+            $renderedInnerLinesWithOffset = array_map($addOffset, $renderedInnerLines);
+            return array_merge(
+                [renderKeyValueLine($key, "{", '')],
+                $renderedInnerLinesWithOffset,
+                ["}"]
+            );
         default:
-        // todo redo
-            return '';
+            [];
     }
 }
 
-function renderDiffTree($diffTree)
+function renderDiffChildren($diffTree)
 {
     $offset = "   ";
-    $nodeRendererFunctionName = __NAMESPACE__ . '\renderDiffNode';
-    $renderedInnerLines = array_map($nodeRendererFunctionName, $diffTree);
-    $renderedDiffLines = array_merge(['{'], $renderedInnerLines, ["{$offset}}"]);
+    $collectRenderedLines = function ($acc, $node) {
+        return array_merge($acc, getRenderedLinesForDiffNode($node));
+    };
+    $addOffset = function ($line) use ($offset) {
+        return "{$offset}{$line}";
+    };
+    $renderedInnerLines = array_reduce($diffTree, $collectRenderedLines, []);
+    // offset
+    // $renderedInnerLinesWithOffset = array_map($addOffset, $renderedInnerLines);
+    $renderedDiffLines = array_merge(['{'], $renderedInnerLines, ['}']);
 // print_r($renderedDiffLines);
     return implode("\n", $renderedDiffLines);
 }
