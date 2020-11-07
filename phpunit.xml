@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true">
-    <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
-            <!-- the files included in the clover report -->
-            <directory suffix=".php">./src</directory>
-        </whitelist>
-    </filter>
-    <logging>
-        <log type="coverage-clover" target="./build/logs/clover.xml"/>
-    </logging>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+    colors="true"
+    backupGlobals="false"
+    backupStaticAttributes="false"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    processIsolation="false"
+    stopOnFailure="true"
+    bootstrap="vendor/autoload.php"
+>
+  <coverage includeUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">./src</directory>
+    </include>
+  </coverage>
 </phpunit>
