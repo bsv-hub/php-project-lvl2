@@ -21,7 +21,7 @@ Options:
   --format <format>             Report format [default: stylish]
 DOC;
 
-function handle()
+function handle(): string
 {
     $docOptResponse = Docopt::handle(DOC, ['version' => VERSION]);
     $pathToOriginalFile = $docOptResponse->args['<pathToOriginalFile>'];

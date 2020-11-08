@@ -35,6 +35,13 @@ function makeDiffTree(Collection $originalData, Collection $modifiedData): Colle
     });
 }
 
+/**
+ * @param string $type
+ * @param string $key
+ * @param mixed $value
+ * @param mixed $previousValue
+ * @return array
+ */
 function makeDiffNode($type, $key, $value, $previousValue = null)
 {
     return compact('type', 'key', 'value', 'previousValue');
@@ -50,11 +57,18 @@ function getNodeKey(array $node): string
     return $node['key'];
 }
 
+/**
+ * @return mixed
+ */
 function getNodeValue(array $node)
 {
     return $node['value'];
 }
 
+/**
+ * @param array $node
+ * @return mixed
+ */
 function getNodePreviousValue(array $node)
 {
     return $node['previousValue'];

@@ -5,7 +5,11 @@ namespace DiffTool\renderers;
 use DiffTool\diffTree;
 use Tightenco\Collect\Support\Collection;
 
-function renderValue($value): string
+/**
+ * @param mixed $value
+ * @return string
+ */
+function renderValue($value)
 {
     if (is_object($value)) {
         return "(object)";

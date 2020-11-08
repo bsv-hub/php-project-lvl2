@@ -6,12 +6,14 @@ use ParseError;
 use Symfony\Component\Yaml\Yaml;
 use Tightenco\Collect\Support\Collection;
 
+use function Safe\json_decode;
+
 const PARSED_TYPE_JSON = 'json';
 const PARSED_TYPE_YAML = 'yaml';
 const UNSUPPORTED_TYPE_MESSAGE = 'This parsing type is unsupported!';
 const UNSUPPORTED_EXTENSION_MESSAGE = 'This file extension is unsupported!';
 
-function parse($text, $type)
+function parse(string $text, string $type): Collection
 {
     if ($type === PARSED_TYPE_JSON) {
         return Collection::make(
@@ -26,7 +28,7 @@ function parse($text, $type)
     throw new ParseError(UNSUPPORTED_TYPE_MESSAGE);
 }
 
-function getParsedTypeForExtension(string $extension)
+function getParsedTypeForExtension(string $extension): string
 {
     $extensionsToTypesMap = [
         'json' => PARSED_TYPE_JSON,
