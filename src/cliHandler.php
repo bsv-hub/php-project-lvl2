@@ -4,7 +4,7 @@ namespace DiffTool\cliHandler;
 
 use Docopt;
 
-use function DiffTool\actions\getRenderedFilesDiffText;
+use function DiffTool\actions\getFilesDiffText;
 
 const VERSION = '0.0.1';
 const DOC = <<<DOC
@@ -13,12 +13,12 @@ Generate diff
 Usage:
   gendiff (-h|--help)
   gendiff (-v|--version)
-  gendiff [--format <fmt>] <pathToOriginalFile> <pathToModifiedFile>
+  gendiff [--format <format>] <pathToOriginalFile> <pathToModifiedFile>
 
 Options:
   -h --help                     Show this screen
   -v --version                  Show version
-  --format <fmt>                Report format [default: plain]
+  --format <format>             Report format [default: stylish]
 DOC;
 
 function handle()
@@ -27,5 +27,5 @@ function handle()
     $pathToOriginalFile = $docOptResponse->args['<pathToOriginalFile>'];
     $pathToModifiedFile = $docOptResponse->args['<pathToModifiedFile>'];
     $format = $docOptResponse->args['--format'];
-    echo getRenderedFilesDiffText($pathToOriginalFile, $pathToModifiedFile, $format);
+    return getFilesDiffText($pathToOriginalFile, $pathToModifiedFile, $format);
 }

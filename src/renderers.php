@@ -3,63 +3,47 @@
 namespace DiffTool\renderers;
 
 use DiffTool\diffTree;
+use Tightenco\Collect\Support\Collection;
 
-function renderValue($value, $level = 0)
+function renderValue($value): string
 {
     if (is_object($value)) {
-        $renderedObjectLines = array_map(
-            function ($key, $item) use ($level) {
-                $renderedValue = renderValue($item);
-                $offset = str_repeat('    ', $level + 1);
-                return "{$offset}    {$key}: {$renderedValue}";
-            },
-            array_keys((array) $value),
-            (array) $value
-        );
-        $renderedObjectContents = implode(",\n", $renderedObjectLines);
-        $offset = str_repeat('    ', $level);
-        return "{\n{$renderedObjectContents}\n{$offset}    }";
+        return "(object)";
     }
+
     if (is_array($value)) {
-        return '[' . implode(', ', $value) . ']';
+        return '[array]';
     }
+
     if (is_bool($value)) {
         return $value ? 'true' : 'false';
     }
+
     return (string) $value;
 }
 
-function renderDiffTree($diffTree, $renderFormat = 'plain', $level = 0)
+function renderDiffTree(Collection $diffTree, string $renderFormat = 'plain'): string
 {
-    // print_r($diffTree);
-    $offset = str_repeat('    ', $level);
-    $diffTextLines = [];
-    $diffTextLines[] = "{";
-    foreach ($diffTree as $node) {
-        $renderedOriginalValue = renderValue($node['originalValue'], $level);
-        $renderedModifiedValue = renderValue($node['modifiedValue'], $level);
-        switch ($node['type']) {
+    $diffTextLines = $diffTree->map(function ($node) {
+        $nodeType = diffTree\getNodeType($node);
+        $nodeKey = diffTree\getNodeKey($node);
+        $renderedNodeValue = renderValue(diffTree\getNodeValue($node));
+        $renderedNodePreviousValue = renderValue(diffTree\getNodePreviousValue($node));
+
+        switch ($nodeType) {
             case diffTree\DIFF_TYPE_SAME:
-                $diffTextLines[] = "{$offset}    {$node['key']}: {$renderedOriginalValue}";
-                break;
+                return "    {$nodeKey}: {$renderedNodeValue}";
             case diffTree\DIFF_TYPE_ADDED:
-                $diffTextLines[] = "{$offset}  + {$node['key']}: {$renderedModifiedValue}";
-                break;
+                return "  + {$nodeKey}: {$renderedNodeValue}";
             case diffTree\DIFF_TYPE_REMOVED:
-                $diffTextLines[] = "{$offset}  - {$node['key']}: {$renderedOriginalValue}";
-                break;
+                return "  - {$nodeKey}: {$renderedNodeValue}";
             case diffTree\DIFF_TYPE_CHANGED:
-                $diffTextLines[] = "{$offset}  - {$node['key']}: {$renderedOriginalValue}";
-                $diffTextLines[] = "{$offset}  + {$node['key']}: {$renderedModifiedValue}";
-                break;
-            case diffTree\DIFF_TYPE_OBJECT:
-                $renderedObject = renderDiffTree($node['children'], $renderFormat, $level + 1);
-                $diffTextLines[] = "{$offset}    {$node['key']}: {$renderedObject}";
-                break;
+                return "  - {$nodeKey}: {$renderedNodePreviousValue}\n"
+                    . "  + {$nodeKey}: {$renderedNodeValue}";
             default:
-                break;
+                // FIXME
+                throw new \Exception("Can't parse node type");
         }
-    }
-    $diffTextLines[] = "{$offset}}";
-    return implode("\n", $diffTextLines);
+    });
+    return Collection::make('{')->merge($diffTextLines)->merge("}\n")->implode("\n");
 }

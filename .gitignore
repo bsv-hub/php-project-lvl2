@@ -1,6 +1,7 @@
 /vendor/
 build
 logs
+.vscode
 *.swo
 *.swp
 *.cache

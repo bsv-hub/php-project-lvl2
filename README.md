@@ -4,4 +4,4 @@
 Analyze diff of config files.
 
 ### Usage
-[![asciicast](https://asciinema.org/a/A3D0BZIWLfVGVLjw8DqpkBggI.svg)](https://asciinema.org/a/A3D0BZIWLfVGVLjw8DqpkBggI)
+[![asciicast](https://asciinema.org/a/371343.svg)](https://asciinema.org/a/371343)
